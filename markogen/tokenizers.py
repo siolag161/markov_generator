@@ -2,6 +2,13 @@
 import re
 import types
 
+try:
+    from types import UnicodeType as UnicodeType
+except Exception: # python 3
+    UnicodeType = str
+
+import six
+
 class Tokenizer(object):
     """Doc string"""
     regex = re.compile(".*")
@@ -9,9 +16,9 @@ class Tokenizer(object):
     @classmethod
     def _process_text(cls, text):
         # Try to ensure unicode:
-        if type(text) != types.UnicodeType:
+        if type(text) != UnicodeType:
             try:
-                text = unicode(text)
+                text = six.u(text)
             except UnicodeDecodeError:
                 text = str(text).encode('string_escape')
                 text = unicode(text)
