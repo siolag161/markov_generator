@@ -1,6 +1,6 @@
 
 from collections import deque
-from itertools import izip
+import six
 
 from .tools import weighted_choice
 from .tokenizers import (HappyTokenizer, CobeTokenizer)
@@ -19,6 +19,8 @@ class Graph(object):
         self.graph.update(attrs)
 
     def add_node(self, node, attr_dict=None, **attrs):
+        """
+        """
         if attr_dict is None:
             attr_dict = attrs
         else:
@@ -35,24 +37,36 @@ class Graph(object):
             self.node[node].update(attr_dict)
 
     def __iter__(self):
+        """
+        """
         return iter(self.node)
 
     def node_iter(self, data=False):
+        """
+        """
         if data:
             return iter(self.node.items())
         else:
             return iter(self.node)
 
     def nodes(self, data=False):
+        """
+        """
         return list(self.node_iter(data=data))
 
     def num_nodes(self):
+        """
+        """
         return len(self.node)
 
     def graph_order(self):
+        """
+        """
         return len(self.node)
 
     def add_edge(self, pred, succ, attr_dict=None, **attrs):
+        """
+        """
         if attr_dict is None:
             attr_dict = attrs
         else:
@@ -78,20 +92,24 @@ class Graph(object):
 
     def num_edges(self, unique=True):
         """number of edges in the graph"""
-        edges = list((q for _, v in self.adj.iteritems() if v\
-                       for _, q in v.iteritems()))
+        edges = list((q for _, v in six.iteritems(self.adj) if v\
+                       for _, q in six.iteritems(v)))
         if unique:
             return sum(1 for _ in edges)
         else:
             return sum(u.get('count', 0) for u in edges)
 
     def update_edge_attrs(self, pred, succ, **attrs):
+        """
+        """
         datadict = self.adj[pred].get(succ, dict())
         datadict.update(**attrs)
         self.succ[pred][succ] = datadict
         self.pred[succ][pred] = datadict
 
     def edge_iter(self, data=False):
+        """
+        """
         node_nbrs = self.adj.iteritems()
         if data:
             for node, nbrs in node_nbrs:
@@ -103,6 +121,8 @@ class Graph(object):
                     yield (node, nbr)
 
     def get_edge(self, pred, succ):
+        """
+        """
         return self.succ[pred][succ]
 
     def successors_iter(self, node):
@@ -119,7 +139,7 @@ class Graph(object):
     def out_edges_iter(self, node, data=True):
         if data:
             nbrs = self.succ[node]
-            for nbr, ddict in nbrs.iteritems():
+            for nbr, ddict in six.iteritems(nbrs):
                 yield (node, nbr, ddict)
         else:
             for nbr in nbrs:
@@ -165,7 +185,7 @@ class MarkovGraph(Graph):
         tokens = self._tokenize(sentence)
         context = deque(maxlen=self.order)
         has_space = False
-        for i in xrange(len(tokens)):
+        for i in six.moves.range(len(tokens)):
             context.append(tokens[i])
             if len(context) == self.order:
                 if tokens[i] == ' ':
@@ -251,7 +271,7 @@ class MarkovGraph(Graph):
         return self.node_id_by_tokens(self.END_CONTEXT)
 
     def _path_to_edges(self, path):
-        for pred, succ in izip(path[:-1], path[1:]):
+        for pred, succ in six.moves.zip(path[:-1], path[1:]):
             ptoken = self.node[pred][self.last_token_key]
             stoken = self.node[succ][self.last_token_key]
             if ptoken != self.END_TOKEN or stoken != self.END_TOKEN:
