@@ -48,4 +48,4 @@ class MarkovGenerator(object):
             while len(phrase) >= max_len:
                 path = next(self.graph.random_walk(root,end))
                 phrase = self.graph._path_to_string(path)
-            yield phrase
+            yield phrase   
