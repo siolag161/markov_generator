@@ -9,7 +9,7 @@ config = {
     'author': 'siolag161',
     'url': 'URL to get it at.',
     'download_url': 'Where to download it.',
-    'author_email': 'pdthanh06@gmail.com',
+    'author_email': 'tom@pdt.space',
     'version': '0.1',
     'install_requires': ['nose','six'],
     'packages': ['markogen'],

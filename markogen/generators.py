@@ -35,18 +35,17 @@ class MarkovGenerator(object):
                 raise Exception("%s has to be an integer"%param_name)
         return param_value
 
-    def reply(self, num_replies=MAX_INT, max_len=MAX_INT, **args):
+    def generate(self, num_sentences=MAX_INT, max_len=MAX_INT, **args):
         """
         """
-        param = self._ensure_positive_int_param("Number of replies", num_replies)
-        max_len = self._ensure_positive_int_param("Maximum length of reply", max_len)
+        param = self._ensure_positive_int_param("Number of sentences", num_sentences)
+        max_len = self._ensure_positive_int_param("Maximum length per sentence", max_len)
         root, end = self.graph.root_node_id(), self.graph.end_node_id()
         for step in count():
-            if step >= num_replies: # False if num_replies = None
+            if step >= num_sentences: # False if num_sentences = None
                 break
-            phrase = ""
-            while True:
+            phrase = " "*max_len
+            while len(phrase) >= max_len:
                 path = next(self.graph.random_walk(root,end))
                 phrase = self.graph._path_to_string(path)
-                if len(phrase) < max_len: break
             yield phrase
